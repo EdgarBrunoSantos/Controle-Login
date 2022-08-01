@@ -4,7 +4,11 @@
  */
 package view;
 
+import DAO.UsuarioDAO;
 import entidades.Usuario;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,8 +35,8 @@ public class TelaLogin extends javax.swing.JFrame {
         lblNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtSenha = new javax.swing.JTextField();
         btnLogar = new javax.swing.JButton();
+        txtSenha = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,9 +70,9 @@ public class TelaLogin extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(lblNome))
                         .addGap(47, 47, 47)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                            .addComponent(txtSenha))))
                 .addContainerGap(62, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -96,13 +100,7 @@ public class TelaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void btnLogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogarActionPerformed
-       String nome = txtNome.getText();
-       String senha = txtSenha.getText();
-       
-       Usuario usuario = new Usuario ();
-       usuario.setNome(nome);
-       usuario.setSenha(senha);
-       
+        logar();
     }//GEN-LAST:event_btnLogarActionPerformed
 
     /**
@@ -145,6 +143,30 @@ public class TelaLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lblNome;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtSenha;
+    private javax.swing.JPasswordField txtSenha;
     // End of variables declaration//GEN-END:variables
+private void logar() {
+        try {
+            String nome = txtNome.getText();
+            String senha = txtSenha.getText();
+
+            Usuario usuario = new Usuario();
+            usuario.setNome(nome);
+            usuario.setSenha(senha);
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            ResultSet rs = usuarioDAO.autenticacao(usuario);
+            if (rs.next()) {
+                TelaPrincipal telaPrincipal = new TelaPrincipal();
+                telaPrincipal.setVisible(true);
+                dispose();
+            } else {
+
+                JOptionPane.showMessageDialog(null, "Usuario ou senha inválidos");
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "ErroTelaLogin " + e);
+        }
+
+    }
 }
